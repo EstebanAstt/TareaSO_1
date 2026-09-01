@@ -1,0 +1,7 @@
+# Compilacion
+cmake-build-debug/
+mishell
+*.o
+
+# Config de CLion
+.idea/
