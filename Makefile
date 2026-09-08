@@ -1,10 +1,16 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=gnu11
+TARGET = mishell
+SRCS = main.c shell.c
+OBJS = $(SRCS:.c=.o)
 
-all: mishell
+all: $(TARGET)
 
-mishell: main.c
-	$(CC) $(CFLAGS) -o mishell main.c
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f mishell
+	rm -f $(OBJS) $(TARGET)

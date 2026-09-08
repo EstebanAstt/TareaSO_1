@@ -4,4 +4,9 @@ project(TareaSO_1 C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -std=gnu11")
 
-add_executable(mishell main.c)
+add_executable(
+        mishell
+        main.c
+        shell.h
+        shell.c
+)
