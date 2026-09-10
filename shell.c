@@ -1,4 +1,5 @@
 #include "shell.h"
+#include "redireccion.h"
 
 void mostrar_prompt(void) {
     char cwd[1024];
@@ -34,6 +35,10 @@ void ejecutar_comando(char **args) {
         exit(EXIT_FAILURE);
     } else if (pid == 0) {
         //proceso hijo con pid identificador = 0
+        if (buscar_redirecciones(args) < 0) {
+            exit(EXIT_FAILURE); // si falla el abrir el archivo, termina el hijo
+        }
+
         if (execvp(args[0], args) < 0) {
             perror("Comando no encontrado");
             exit(EXIT_FAILURE); // Finaliza solo al proceso hijo que falló

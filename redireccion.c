@@ -7,6 +7,8 @@
 
 int buscar_redirecciones(char **args) { // verifica si hay redirecciones en el comando
     for (int i = 0; args[i] != NULL; i++){
+        int i = 0;
+        int corte_args = -1; // donde esta terminando el comando
         // redireccion de entrada (<)
         if (strcmp(args[i], "<") == 0) {
             char *archivo = args[i + 1];
@@ -22,7 +24,8 @@ int buscar_redirecciones(char **args) { // verifica si hay redirecciones en el c
             dup2(fd, STDIN_FILENO);
             close(fd);
 
-            args[i] = NULL; // cortar los argumentos para que execvp no se confunda con la redirección
+            if(corte_args == -1) corte_args = i; // si no se ha cortado antes, corta los argumentos para que execvp no se confunda con la redirección
+            i +=2; // saltar el archivo y el simbolo de redirección
         }
         // redireccion de salida con truncado a 0 bytes (>)
         else if (strcmp(args[i], ">") == 0) {
@@ -39,7 +42,8 @@ int buscar_redirecciones(char **args) { // verifica si hay redirecciones en el c
             dup2(fd, STDOUT_FILENO);
             close(fd);
 
-            args[i] = NULL; // cortar los argumentos para que execvp no se confunda con la redirección
+            if (corte_args == -1) corte_args = i; // si no se ha cortado antes, corta los argumentos para que execvp no se confunda con la redirección
+            i +=2; // saltar el archivo y el simbolo de redirección
         }
         // redireccion de salida con append (>>)
         else if (strcmp(args[i], ">>") == 0) {
@@ -56,8 +60,13 @@ int buscar_redirecciones(char **args) { // verifica si hay redirecciones en el c
             dup2(fd, STDOUT_FILENO);
             close(fd);
 
-            args[i] = NULL; // cortar los argumentos para que execvp no se confunda con la redirección
+            if (corte_args == -1) corte_args = i; // si no se ha cortado antes, corta los argumentos para que execvp no se confunda con la redirección
+            i +=2; // saltar el archivo y el simbolo de redirección
         } 
+    
+    if (corte_args != -1) {
+        args[corte_args] = NULL; // si existieron redirecciones, corta los argumentos para que execvp no se confunda con la redirección
+        }
     }
     return 0; // todo salio bien
 }
