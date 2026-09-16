@@ -1,5 +1,6 @@
 #include "shell.h"
 #include "redireccion.h"
+#include "pipes.h"
 
 void mostrar_prompt(void) {
     char cwd[1024];
@@ -29,6 +30,10 @@ void tokenizar(char *linea, char **args) {
 
 void ejecutar_comando(char **args) {
 
+    if(crear_pipes(args)){
+        return; // si hay pipes, la función crear_pipes se encarga de ejecutar los comandos
+    }
+    
     pid_t pid = fork();
     if (pid < 0) {
         perror("Error en fork()");
