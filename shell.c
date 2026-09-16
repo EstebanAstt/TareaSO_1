@@ -1,4 +1,6 @@
 #include "shell.h"
+#include "redireccion.h"
+#include "pipes.h"
 
 void mostrar_prompt(void) {
     char cwd[1024];
@@ -28,12 +30,20 @@ void tokenizar(char *linea, char **args) {
 
 void ejecutar_comando(char **args) {
 
+    if(crear_pipes(args)){
+        return; // si hay pipes, la función crear_pipes se encarga de ejecutar los comandos
+    }
+    
     pid_t pid = fork();
     if (pid < 0) {
         perror("Error en fork()");
         exit(EXIT_FAILURE);
     } else if (pid == 0) {
         //proceso hijo con pid identificador = 0
+        if (buscar_redirecciones(args) < 0) {
+            exit(EXIT_FAILURE); // si falla el abrir el archivo, termina el hijo
+        }
+
         if (execvp(args[0], args) < 0) {
             perror("Comando no encontrado");
             exit(EXIT_FAILURE); // Finaliza solo al proceso hijo que falló
