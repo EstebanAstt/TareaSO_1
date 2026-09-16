@@ -10,20 +10,37 @@ void mostrar_prompt(void) {
     fflush(stdout);
 }
 
-// funcion que separa la cadena en tokens individuales (por cada espacio basicamente)
+//Funcion que separa la cadena en tokens individuales (por cada espacio, excepto si esta entre comillas simples '')
 void tokenizar(char *linea, char **args) {
-    int i = 0;
     // Elimina el salto de línea al final de fgets
     linea[strcspn(linea, "\n")] = '\0';
 
-    // Separa por espacios y tabulaciones
-    char *token = strtok(linea, " \t");
-    while (token != NULL && i < MAX_ARGS - 1) {
-        args[i] = token;
-        i++;
-        token = strtok(NULL, " \t");
+    char *inicio_palabra = linea;
+    int saltar_espacio = 0;
+    int cant_argumentos = 0;
+
+    for(int i = 0;linea[i] != '\0';i++){
+        //Verificamos si estamos dentro de comillas utilizando saltar_espacio
+        if(linea[i] == '\'') saltar_espacio = !saltar_espacio;
+
+        //Encontramos un espacio y verificamos que no estemos dentro de comillas
+        if(linea[i] == ' ' && saltar_espacio == 0){
+            linea[i] = '\0';
+
+            if(*inicio_palabra != '\0'){
+                args[cant_argumentos] = inicio_palabra;
+                cant_argumentos++;
+            }
+        //para que empiece luego del '\0'
+        inicio_palabra = &linea[i+1];
+        }
     }
-    args[i] = NULL; // el ultimo puntero en NULL para execvp
+    //ya que el ciclo termina cuando encuentra '\0', se agrega la ultima palabra si esta no es '\0'
+    if(*inicio_palabra != '\0'){
+        args[cant_argumentos] = inicio_palabra;
+        cant_argumentos++;
+    }
+    args[cant_argumentos] = NULL; // el ultimo puntero en NULL para execvp
 }
 
 void ejecutar_comando(char **args) {
