@@ -2,7 +2,7 @@
 R2)
 - Redirecci´on de entrada/salida (R3) - fefa (listo)
 - Pipes de largo arbitrario (R4) - fefa (listo)
-- Ejecuci´on en background y recolecci´on con SIGCHLD (R5)
+- Ejecuci´on en background y recolecci´on con SIGCHLD - esteban(R5)
 - Manejo de SIGINT en foreground vs. shell (R6) 
 - Comando pmon 
 - C´odigo Fuente 
