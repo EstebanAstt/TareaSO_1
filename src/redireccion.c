@@ -1,4 +1,4 @@
-#include "redireccion.h"
+#include "../include/redireccion.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

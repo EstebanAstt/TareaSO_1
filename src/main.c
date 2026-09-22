@@ -1,8 +1,10 @@
-#include "shell.h"
+#include "../include/shell.h"
+#include "../include/job.h"
 
 int main(void) {
     char linea[MAX_LINE];
     char *args[MAX_ARGS];
+    Job lista_jobs[MAX_JOBS];
 
     while (1) {
         //se muestra el prompt con el directorio actual
@@ -22,6 +24,19 @@ int main(void) {
 
         // Salida básica por comando interno exit
         if (strcmp(args[0], "exit") == 0) break;
+
+        //comando interno jobs
+        if (strcmp(args[0], "jobs") == 0) {
+            // Recorremos el arreglo de jobs
+            for (int i = 0; i < MAX_JOBS; i++) {
+                // Si el trabajo está marcado como activo, lo mostramos
+                if (lista_jobs[i].activo) {
+                    printf("[%d] Ejecutando %s\n", lista_jobs[i].id, lista_jobs[i].comando);
+                }
+            }
+            // Saltamos el resto del ciclo (fork/exec) y volvemos a mostrar el prompt
+            continue;
+        }
 
         //Comando cd puedes cambiar de directorio
         if (strcmp(args[0], "cd") == 0){

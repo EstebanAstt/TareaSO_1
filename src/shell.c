@@ -1,6 +1,6 @@
-#include "shell.h"
-#include "redireccion.h"
-#include "pipes.h"
+#include "../include/shell.h"
+#include "../include/redireccion.h"
+#include "../include/pipes.h"
 
 void mostrar_prompt(void) {
     char cwd[1024];

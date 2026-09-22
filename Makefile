@@ -1,7 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=gnu11
+CFLAGS = -Wall -Wextra -std=gnu11 -Iinclude
 TARGET = mishell
-SRCS = main.c shell.c redireccion.c pipes.c
+
+SRCS = src/main.c src/shell.c src/pipes.c src/redireccion.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(TARGET)
@@ -9,9 +10,8 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-%.o: %.c
-
+src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f src/*.o *.o mishell

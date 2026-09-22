@@ -1,5 +1,5 @@
-#include "pipes.h"
-#include "redireccion.h"  //en caso que en el comando haya redirecciones
+#include "../include/pipes.h"
+#include "../include/redireccion.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
