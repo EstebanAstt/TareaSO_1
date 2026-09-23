@@ -1,10 +1,24 @@
 #include "../include/shell.h"
 #include "../include/job.h"
 
+Job lista_jobs[MAX_JOBS];
+
 int main(void) {
+
     char linea[MAX_LINE];
     char *args[MAX_ARGS];
-    Job lista_jobs[MAX_JOBS];
+
+    int bandera_bg = 0;
+
+    struct sigaction sa;
+    sa.sa_handler = manejador_sigchld;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
+
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+        perror("Error instalando manejador SIGCHLD");
+        exit(EXIT_FAILURE);
+    }
 
     while (1) {
         //se muestra el prompt con el directorio actual
@@ -17,7 +31,7 @@ int main(void) {
         }
 
         //Tokenizar la entrada del usuario
-        tokenizar(linea, args);
+        tokenizar(linea, args, &bandera_bg);
 
         // Si la línea estaba vacía (solo presionó Enter)
         if (args[0] == NULL) continue;
@@ -63,7 +77,7 @@ int main(void) {
         }
 
         //Crear proceso e invocar el ejecutable
-        ejecutar_comando((args));
+        ejecutar_comando(args, bandera_bg);
     }
     return 0;
 }

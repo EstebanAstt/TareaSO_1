@@ -17,7 +17,8 @@
 
 // Prototipos de funciones
 void mostrar_prompt(void);
-void tokenizar(char *linea, char **args);
-void ejecutar_comando(char **args);
+void tokenizar(char *linea, char **args, int *bandera_bg);
+void ejecutar_comando(char **args, int bandera_bg);
+void manejador_sigchld(int sig);
 
 #endif // SHELL_H
