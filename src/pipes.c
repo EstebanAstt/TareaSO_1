@@ -6,9 +6,11 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+#include "job.h"
+
 #define MAX_PIPES 32 // máximo número de pipes que se pueden crear
 
-int crear_pipes(char **args){
+int crear_pipes(char **args, int bandera_bg) {
     //revisar si hay al menos un "|"
     int existe_pipe = 0;
     for (int i = 0; args[i] != NULL; i++){
@@ -90,8 +92,39 @@ int crear_pipes(char **args){
                 fd_in = fd_pipe[0]; // la entrada del siguiente comando será la salida del pipe actual
             }
         } 
-       for (int i = 0; i < num_comandos; i++) {
+    /* se añade este condicional para que se puedan añadir procesos en 2do plano con pipes, ahora no termina siempre todos
+     * los procesos hijos */
+    if (bandera_bg) {
+        // --- EJECUCIÓN EN BACKGROUND (R5) ---
+        // Guardamos el trabajo en lista_jobs usando el PID del último comando de la tubería
+        int job_id = -1;
+        for (int j = 0; j < MAX_JOBS; j++) {
+            if (!lista_jobs[j].activo) {
+                lista_jobs[j].id = j + 1;
+                lista_jobs[j].pid = pids[num_comandos - 1]; // PID del último proceso hijo
+
+                // Guardamos la representación del comando
+                strncpy(lista_jobs[j].comando, args[0], sizeof(lista_jobs[j].comando) - 1);
+                lista_jobs[j].comando[sizeof(lista_jobs[j].comando) - 1] = '\0';
+
+                lista_jobs[j].activo = 1;
+                job_id = lista_jobs[j].id;
+                break;
+            }
+        }
+
+        if (job_id != -1) {
+            printf("[%d] %d\n", job_id, pids[num_comandos - 1]);
+        }
+
+        // no se hace waitpid aqui para retornar inmediatamente y no bloquear la shell.
+        return 1;
+
+    } else {
+        for (int i = 0; i < num_comandos; i++) {
             waitpid(pids[i], NULL, 0); // esperar a que terminen todos los procesos hijos
         }
-    return 1; // éxito
+        return 1;
+    }
+    return 1; // exito
 }

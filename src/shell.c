@@ -60,7 +60,7 @@ void tokenizar(char *linea, char **args, int *bandera_bg) {
 
 void ejecutar_comando(char **args, int bandera_bg) {
 
-    if(crear_pipes(args)){
+    if(crear_pipes(args, bandera_bg)){
         return; // si hay pipes, la función crear_pipes se encarga de ejecutar los comandos
     }
     
