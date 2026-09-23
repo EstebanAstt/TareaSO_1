@@ -1,9 +1,9 @@
--Ciclo b´asico de la shell y comandos internos (R1–
+-Ciclo basico de la shell y comandos internos (R1–
 R2)
-- Redirecci´on de entrada/salida (R3) - fefa (listo)
+- Redireccion de entrada/salida (R3) - fefa (listo)
 - Pipes de largo arbitrario (R4) - fefa (listo)
-- Ejecuci´on en background y recolecci´on con SIGCHLD - esteban(R5)
+- Ejecucion en background y recoleccion con SIGCHLD - esteban(R5)
 - Manejo de SIGINT en foreground vs. shell (R6) 
 - Comando pmon 
-- C´odigo Fuente 
+- Codigo Fuente 
 
