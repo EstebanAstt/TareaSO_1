@@ -15,4 +15,4 @@ add_executable(mishell
         src/redireccion.c
         src/senales.c
 )
-target_link_libraries(mishell readline) //link readline, flechitas
+target_link_libraries(mishell readline) # link libreria para las flechitas
