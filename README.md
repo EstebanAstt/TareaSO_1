@@ -8,8 +8,8 @@ Una implementación de shell para Linux desarrollada en C, capaz de gestionar la
 
 - ### Josefa Arriagada (N° )
 - ### Esteban Astete (N°2025446162)
-- ### Vicente Carrasco (N°)
-- ### Tomás Pizarro (N°)
+- ### Vicente Carrasco (N°2025451514])
+- ### Tomás Pizarro (N°2025435799)
 
 ---
 
