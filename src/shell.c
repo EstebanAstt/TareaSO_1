@@ -4,6 +4,8 @@
 #include "../include/job.h"
 #include "../include/senales.h"
 #include <sys/wait.h>
+#include <stdlib.h>
+#include <string.h>
 
 void mostrar_prompt(void) {
     char cwd[1024];
@@ -169,5 +171,37 @@ void manejador_sigchld(int sig) {
                 break;
             }
         }
+    }
+}
+void expandir_variables (char **args) {
+    for (int i = 0; args[i] != NULL; i++) {
+        if (args[i][0] == '$') { // si el argumento comienza con '$', es una variable de entorno
+            char *nombre_var = args[i] + 1; // obtener el valor de la variable de entorno
+            char *valor_var = getenv(nombre_var); //utiliza la funcion getenv para obtener el valor de la variable de entorno
+            if (valor_var != NULL) {
+                args[i] = valor_var; // reemplazar el argumento con el valor de la variable
+            } else {
+                args[i] = ""; // si la variable no existe, reemplazar con cadena vacía
+            }
+        }
+    }
+}
+
+void ejecutar_export(char **args) { // verifica que el usuario proporciono algo despues del comando export
+    if (args[1] == NULL) {
+        printf("Uso: export VAR=valor\n");
+        return; //finaliza la funcion si no hay argumento
+    }
+
+    char *signo_igual = strchr(args[1], '='); // usamos el signo = para indicar que es una variable de entorno y separar el nombre del valor
+    
+    if (signo_igual != NULL) {
+        *signo_igual = '\0'; 
+        char *nombre = args[1];          
+        char *valor = signo_igual + 1; // el valor es la parte después del '='
+        
+        setenv(nombre, valor, 1); 
+    } else {
+        printf("Error: Formato incorrecto. Uso: export VAR=valor\n");
     }
 }

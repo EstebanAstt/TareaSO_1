@@ -59,6 +59,7 @@ int main(void) {
 
         //Tokenizar la entrada del usuario
         tokenizar(linea, args, &bandera_bg);
+        expandir_variables(args); // Expande las variables de entorno antes de ejecutar el comando
 
         // Si la línea estaba vacía (solo presionó Enter)
         if (args[0] == NULL) continue;
@@ -76,6 +77,12 @@ int main(void) {
                 }
             }
             // Saltamos el resto del ciclo (fork/exec) y volvemos a mostrar el prompt
+            continue;
+        }
+
+        //comando interno export
+        if (strcmp(args[0], "export") == 0) { // se compara el primer argumento con "export" para identificar el comando interno
+            ejecutar_export(args);
             continue;
         }
 
