@@ -28,10 +28,10 @@ void tokenizar(char *linea, char **args, int *bandera_bg) {
     int saltar_espacio = 0;
     int cant_argumentos = 0;
 
-    // Tokenización que
+    // Tokenizacion
     for (int i = 0; linea[i] != '\0'; i++) {
         // Verificamos si estamos dentro de comillas utilizando saltar_espacio
-        if (linea[i] == '\'') saltar_espacio = !saltar_espacio;
+        if (linea[i] == '\'' || linea[i] == '\"') saltar_espacio = !saltar_espacio;
 
         // Encontramos un espacio y verificamos que no estemos dentro de comillas
         if (linea[i] == ' ' && saltar_espacio == 0) {
@@ -52,6 +52,18 @@ void tokenizar(char *linea, char **args, int *bandera_bg) {
         cant_argumentos++;
     }
     args[cant_argumentos] = NULL; // El último puntero en NULL para execvp
+
+    // Recorremos todos los argumentos guardados para quitarles las comillas de los extremos (en caso de que se utilizaron comillas
+    for (int j = 0; j < cant_argumentos; j++) {
+        int len = strlen(args[j]);
+        // Si el argumento tiene al menos 2 caracteres y está envuelto en comillas simples o dobles
+        if (len >= 2 && ((args[j][0] == '\"' && args[j][len-1] == '\"') ||
+                         (args[j][0] == '\'' && args[j][len-1] == '\''))) {
+
+            args[j][len-1] = '\0'; // Reemplazamos la comilla final por un fin de cadena
+            args[j]++;             // Avanzamos el puntero un espacio para ignorar la comilla inicial
+                         }
+    }
 
     // se Verifica el background (se ejecuta cuando args ya está lleno)
     if (cant_argumentos > 0 && strcmp(args[cant_argumentos - 1], "&") == 0) {
