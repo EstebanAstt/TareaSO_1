@@ -110,6 +110,11 @@ int main(void) {
             continue;
         }
 
+        //funcion que maneja las entradas 
+        if (manejador_entradas(args)){
+            continue;
+        }
+
         //Crear proceso e invocar el ejecutable
         ejecutar_comando(args, bandera_bg);
     }
