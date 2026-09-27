@@ -20,5 +20,9 @@ void mostrar_prompt(void);
 void tokenizar(char *linea, char **args, int *bandera_bg);
 void ejecutar_comando(char **args, int bandera_bg);
 void manejador_sigchld(int sig);
+void ejecutar_jobs(void);
+void ejecutar_pmon(char **args);
+void ejecutar_cd(char **args);
+int manejador_entradas(char **args);
 
 #endif // SHELL_H
