@@ -84,7 +84,7 @@ TareaSO_1/
 | **Segundo Plano** | R5                         | Detección de `&`, ejecución no bloqueante y recolección asíncrona mediante `SIGCHLD`. | Esteban Astete  |                    
 | **Manejo de Señales**| R6                         | La shell ignora `SIGINT` (Ctrl+C) y `SIGTSTP` (Ctrl+Z), restaurándolas en procesos hijo. | Tomas Pizarro |                     
 | **Monitor `pmon`** | Punto 3 (comando especial) | Lectura directa de `/proc/[pid]/stat` y `status`, cálculo de %CPU y refresco con `alarm()`. | Vicente Carrasco                  |
-| **Historial de comandos navegable con las flechas ↑/↓** | usando readline | Tomás Pizarro                  |
+| **Historial de comandos navegable con las flechas ↑/↓** |Bonus| Usando biblioteca readline. | Tomás Pizarro                  |
 
 
 ---
