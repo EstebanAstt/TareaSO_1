@@ -87,9 +87,8 @@ void manejador_sigint_pmon(int signum) {
 
 void ejecutar_pmon(char **args){
 
-    fprintf(stderr, "DEBUG: entrando a ejecutar_pmon\n");
     fflush(stderr);
-    
+
     tiempo_pmon = (args[1] != NULL) ? atoi(args[1]) : 2;
     
     salir_pmon = 0;
@@ -232,7 +231,7 @@ int manejador_entradas(char **args){
     }
 
     if(strcmp(args[0],"exit") == 0){
-        int codigo = atoi(args[1]);
+        int codigo = (args[0] != NULL) ? atoi(args[0]): 0;
         exit(codigo);
     }
 
