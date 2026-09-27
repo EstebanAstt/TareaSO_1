@@ -150,9 +150,8 @@ void ejecutar_pmon(char **args){
                         fscanf(archivo, "%*d %*s %c %*d %*d %*d %*d %*d %*d %*d %*d %*d %*d %lu %lu", &estado, &utime, &stime);
                         
                         //Se cambia el contenido de estado dependiendo de la lectura, para cumplir con la pauta.
-                        estado = 
-                        (estado == 'R') ? 'Ejecutando': 
-                        (estado == 'S') ? "ejecutando":
+                        const char *estado_txt = 
+                        (estado == 'R') ? "Ejecutando": 
                         (estado == 'S') ? "durmiendo":
                         (estado == 'D') ? "esperando":
                         (estado == 'Z') ? "zombie":
@@ -211,7 +210,7 @@ void ejecutar_pmon(char **args){
                             lista_jobs[i].prev_timestamp = tiempo_actual;
                         }
                         //Se imprimen los datos en pantalla para cada proceso
-                        printf("%d\t%s\t%c\t%.1f\t%d\n", lista_jobs[i].pid, lista_jobs[i].comando, estado, cpu_porcentaje, rss_kb);            
+                        printf("%d\t%s\t%c\t%.1f\t%d\n", lista_jobs[i].pid, lista_jobs[i].comando, estado_txt, cpu_porcentaje, rss_kb);            
                         }
                     }
                 }
@@ -254,7 +253,7 @@ int manejador_entradas(char **args){
     }
 
     if(strcmp(args[0],"exit") == 0){
-        int codigo = (args[0] != NULL) ? atoi(args[0]): 0;
+        int codigo = (args[1] != NULL) ? atoi(args[1]): 0;
         exit(codigo);
     }
 
