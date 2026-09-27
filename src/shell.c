@@ -71,45 +71,57 @@ void ejecutar_jobs(){
     }
 }
 
+//banderas para utilizar en funcion ejecutar_pmon.
 volatile sig_atomic_t salir_pmon = 0;
 volatile sig_atomic_t tiempo_agotado = 0;
+
+//Defino tiempo pmon fuera para evitar bugs.
 int tiempo_pmon = 2;
+
 void manejador_alarma(int signum) {
     (void)signum;
-    tiempo_agotado = 1; // Encendemos el aviso de refresco
-    alarm(tiempo_pmon);           // Reprogramamos la siguiente alarma
+    tiempo_agotado = 1; //Da la señal para volver a ejecutar.
+    alarm(tiempo_pmon); //Programa la siguiente alarma.
 }
 
+//Funcion que se utiliza cuando aparece CTRL + C
 void manejador_sigint_pmon(int signum) {
     (void)signum;
     salir_pmon = 1;
 }
 
 void ejecutar_pmon(char **args){
-
+//Limpia las entradas
     fflush(stderr);
 
+    //Le asigna un valor al tiempo en el que se recargan los datos, si no se le agrega un valor se deja por defecto por 2.
     tiempo_pmon = (args[1] != NULL) ? atoi(args[1]) : 2;
     
+    //Se actualizan los valores de las banderas proximas a utilizar
     salir_pmon = 0;
     tiempo_agotado = 1;
 
+    //Estructura que refresca la alarma
     struct sigaction sa;
-    sa.sa_handler = manejador_alarma;
+    sa.sa_handler = manejador_alarma; //Funcion a ejecutar
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
     sigaction(SIGALRM, &sa, NULL);
 
+    //Estructura que se encarga de la señal CTRL+C
     struct sigaction sa_int;
-    sa_int.sa_handler = manejador_sigint_pmon;
+    sa_int.sa_handler = manejador_sigint_pmon; //Funcion a ejecutar
     sigemptyset(&sa_int.sa_mask);
-    sa_int.sa_flags = 0; // Sin SA_RESTART para despertar a pause() de inmediato
+    sa_int.sa_flags = 0; //Sin SA_RESTART para despertar a pause() de inmediato
     sigaction(SIGINT, &sa_int, NULL);
 
+    //Programa la primer alarma
     alarm(tiempo_pmon);
 
+    //Se imprime el nombre de las variables con sus respectivos espacios
     printf("PID\tCOMANDO\tESTADO\t%%CPU\tRSS(KB)\n");
     
+    //Bucle en del cual solo se puede salir apretando CTRL + C,y que mantendra en ejecucion pmon
     while(!salir_pmon){
         if(tiempo_agotado){
             tiempo_agotado = 0;
@@ -121,6 +133,7 @@ void ejecutar_pmon(char **args){
                     char ruta_arch[300];
                     snprintf(ruta_arch, sizeof(ruta_arch),"/proc/%d/stat",pid_pmon);
                     
+                    //Se abre el archivo stat, en modo lectura
                     FILE *archivo = fopen(ruta_arch,"r");
 
                     if(archivo != NULL){
@@ -136,6 +149,15 @@ void ejecutar_pmon(char **args){
                         //Se lee lo que esta dentro del archivo y utilizando %* salto lineas no deseadas, y leo solamente lo necesario
                         fscanf(archivo, "%*d %*s %c %*d %*d %*d %*d %*d %*d %*d %*d %*d %*d %lu %lu", &estado, &utime, &stime);
                         
+                        //Se cambia el contenido de estado dependiendo de la lectura, para cumplir con la pauta.
+                        estado = 
+                        (estado == 'R') ? 'Ejecutando': 
+                        (estado == 'S') ? "ejecutando":
+                        (estado == 'S') ? "durmiendo":
+                        (estado == 'D') ? "esperando":
+                        (estado == 'Z') ? "zombie":
+                        (estado == 'T') ? "detenido":"desconocido";
+
                         //Se cierra el archivo_stat
                         fclose(archivo);
 
@@ -161,24 +183,25 @@ void ejecutar_pmon(char **args){
                         fclose(archivo_status);
                         
                         unsigned long tiempo_cpu_actual = utime + stime;
-                        double cpu_porcentaje = 0.0; // Variable para almacenar e imprimir el resultado
+                        double cpu_porcentaje = 0.0; //Variable para almacenar e imprimir el resultado
 
                         //Calculo de %CPU
                         if(lista_jobs[i].prim_lect == 1){
-                            //Primera lectura: No hay delta previo para comparar
+                            //En la primera lectura no hay datos por lo que se almacenan los iniciales para su posterior lectura.
                             lista_jobs[i].ant_cpu_time = tiempo_cpu_actual;
                             lista_jobs[i].prev_timestamp = tiempo_actual;
-                            lista_jobs[i].prim_lect = 0; // Apagamos la bandera para la próxima lectura
+                            lista_jobs[i].prim_lect = 0; //Apagamos la bandera para la próxima lectura
                             cpu_porcentaje = 0.0;
                         }
                         else {
-                            //Lecturas posteriores: Calculamos la diferencia
+                            //Si no es la primera lectura se calcula la diferencia de ticks y tiempo en segundos
                             unsigned long delta_cpu_ticks = tiempo_cpu_actual - lista_jobs[i].ant_cpu_time;
                             double delta_tiempo_seg = tiempo_actual - lista_jobs[i].prev_timestamp;
 
-                            // Convertir ticks a segundos consultando la configuración del sistema
+                            //Convertir ticks a segundos consultando la configuración del sistema
                             double delta_cpu_seg = (double)delta_cpu_ticks / sysconf(_SC_CLK_TCK);
 
+                            //Se calcula el porcentaje CPU y evita posible error si es que el tiempo llegara a dar 0.
                             if (delta_tiempo_seg > 0) {
                                 cpu_porcentaje = (delta_cpu_seg / delta_tiempo_seg) * 100.0;
                             }
@@ -197,8 +220,8 @@ void ejecutar_pmon(char **args){
         pause(); //Duerme hasta que llegue una señal
     }
     //Limpieza final al salir del while
-    alarm(0); // Cancela cualquier alarma pendiente para que no interrumpa a la shell[cite: 3]
-    configurar_senales_shell(); // Restaura la protección de la shell contra Ctrl+C[cite: 4]
+    alarm(0); //Cancela cualquier alarma pendiente para que no interrumpa a la shell
+    configurar_senales_shell(); //Restaura la protección de la shell contra Ctrl+C
     printf("\nSaliendo de pmon...\n");
 }
 
