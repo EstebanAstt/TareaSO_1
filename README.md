@@ -6,7 +6,7 @@ Una implementación de shell para Linux desarrollada en C, capaz de gestionar la
 ---
 ## Autores
 
-- ### Josefa Arriagada (N° )
+- ### Josefa Arriagada (N° 2025423812)
 - ### Esteban Astete (N°2025446162)
 - ### Vicente Carrasco (N°2025451514])
 - ### Tomás Pizarro (N°2025435799)
