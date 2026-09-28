@@ -59,6 +59,8 @@ TareaSO_1/
 │   ├── pipes.h
 │   ├── redireccion.h
 │   └── senales.h
+|   └── pmon.h
+|   └── parser.h    
 ├── src/               # Archivos de código fuente (.c)
 │   ├── main.c
 │   ├── shell.c
@@ -66,6 +68,8 @@ TareaSO_1/
 │   ├── pipes.c
 │   ├── redireccion.c
 │   └── senales.c
+|   └── pmon.c
+|   └── parser.c
 ├── Makefile           # Script de compilación para la terminal
 ├── CMakeLists.txt     # Configuración para CLion
 ├── .gitignore         
