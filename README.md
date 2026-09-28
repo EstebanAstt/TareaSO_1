@@ -85,6 +85,8 @@ TareaSO_1/
 | **Manejo de Señales**| R6                         | La shell ignora `SIGINT` (Ctrl+C) y `SIGTSTP` (Ctrl+Z), restaurándolas en procesos hijo. | Tomas Pizarro |                     
 | **Monitor `pmon`** | Punto 3 (comando especial) | Lectura directa de `/proc/[pid]/stat` y `status`, cálculo de %CPU y refresco con `alarm()`. | Vicente Carrasco                  |
 | **Historial de comandos navegable con las flechas ↑/↓** |Bonus| Usando biblioteca readline. | Tomás Pizarro                  |
+| **CPU en pmon**|Bonus| Agregar orden de la tabla por %CPU (similar a top) y resaltar el proceso con mayor uso. | Vicente Carrasco                  |
+| **Asignación a variables de entorno**|Bonus| Variables de entorno propias de la shell y expansión de $VAR dentro de la línea de comandos. | Josefa Arriagada                  |
 
 
 ---
