@@ -97,6 +97,7 @@ exit
 # ejecución de comandos en 2° plano:
 sleep 30 &
 sleep 20 &
+sleep 25 &
 jobs
 
 ```
