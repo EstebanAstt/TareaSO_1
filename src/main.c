@@ -4,8 +4,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-Job lista_jobs[MAX_JOBS];
-
 int main(void) {
 
     char linea[MAX_LINE];

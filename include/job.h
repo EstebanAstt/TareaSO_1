@@ -20,5 +20,6 @@ typedef struct {
 
 // Declaracion extern (avisa que la variable está definida en algún .c, por ahora en main.c)
 extern Job lista_jobs[MAX_JOBS];
+void ejecutar_jobs(void);
 
 #endif

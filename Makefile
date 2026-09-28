@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=gnu11 -Iinclude
-SRC = src/main.c src/shell.c src/pipes.c src/redireccion.c src/senales.c
+SRC = src/main.c src/shell.c src/pipes.c src/redireccion.c src/senales.c src/parser.c src/pmon.c 
 OBJ = $(SRC:.c=.o)
 TARGET = mishell
 
