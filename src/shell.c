@@ -23,7 +23,7 @@ void mostrar_prompt(void) {
 void tokenizar(char *linea, char **args, int *bandera_bg) {
     *bandera_bg = 0; // Inicializamos la bandera en 0 por defecto
 
-    // se elimina el salto de línea al final de fgets
+    // se elimina el salto de línea del final
     linea[strcspn(linea, "\n")] = '\0';
 
     char *inicio_palabra = linea;
@@ -88,6 +88,8 @@ void ejecutar_jobs(){
 //banderas para utilizar en funcion ejecutar_pmon.
 volatile sig_atomic_t salir_pmon = 0;
 volatile sig_atomic_t tiempo_agotado = 0;
+volatile sig_atomic_t pmon_activo = 0;
+
 
 //Defino tiempo pmon fuera para evitar bugs.
 int tiempo_pmon = 2;
@@ -107,6 +109,7 @@ void manejador_sigint_pmon(int signum) {
 void ejecutar_pmon(char **args){
 //Limpia las entradas
     fflush(stderr);
+    pmon_activo = 1;
 
     //Le asigna un valor al tiempo en el que se recargan los datos, si no se le agrega un valor se deja por defecto por 2.
     tiempo_pmon = (args[1] != NULL) ? atoi(args[1]) : 2;
@@ -132,13 +135,19 @@ void ejecutar_pmon(char **args){
     //Programa la primer alarma
     alarm(tiempo_pmon);
 
-    //Se imprime el nombre de las variables con sus respectivos espacios
-    printf("PID\tCOMANDO\tESTADO\t%%CPU\tRSS(KB)\n");
+    //Entrar a la pantalla alternativa antes de terminar el ciclo
+    printf("\033[?1049h");
+    fflush(stdout);
+
     
     //Bucle en del cual solo se puede salir apretando CTRL + C,y que mantendra en ejecucion pmon
     while(!salir_pmon){
         if(tiempo_agotado){
             tiempo_agotado = 0;
+            //Mueve el cursor al inicio (H) y limpia de ahí hacia abajo (J)
+            printf("\033[H\033[J");
+            // Vuelve a imprimir las cabeceras para que queden fijas arriba
+            printf("PID\tCOMANDO\tESTADO\t%%CPU\tRSS(KB)\n");
             for(int i = 0;i < MAX_JOBS; i++){
                 if(lista_jobs[i].activo){
 
@@ -229,13 +238,19 @@ void ejecutar_pmon(char **args){
                     }
                 }
             }
+            fflush(stdout);
         }
         pause(); //Duerme hasta que llegue una señal
     }
     //Limpieza final al salir del while
     alarm(0); //Cancela cualquier alarma pendiente para que no interrumpa a la shell
     configurar_senales_shell(); //Restaura la protección de la shell contra Ctrl+C
+    pmon_activo = 0; //Avisamos que salimos de pmon
+
+    //salir de la pantalla alternativa al terminar
+    printf("\033[?1049l");
     printf("\nSaliendo de pmon...\n");
+    fflush(stdout);
 }
 
 void ejecutar_cd(char **args){
@@ -368,25 +383,31 @@ void manejador_sigchld(int sig) {
             if (lista_jobs[i].activo && lista_jobs[i].pid == pid) {
                 lista_jobs[i].activo = 0;
 
-                /* Se verifica si el proceso fallo o cumplio con exito. Anteriormente se mostraba en la terminal
-                 * [id]+ Done command indepiendiente si estaba bien escrito o no, con el nuevo condicional si el
-                 * comando no existe u ocurre otro error la shell lo notificara
+                /*
+                 *Se verifica si el pmon esta activo, en caso de estar activo, no avisa que termino un proceso (ya que se
+                 *puede visualizar. Si se mantenia desordenaba la interfaz del pmon )
                  */
-                if (WIFEXITED(status) && WEXITSTATUS(status) == EXIT_FAILURE) {
-                    printf("\n[%d]+ Error de ejecucion %s\n", lista_jobs[i].id, lista_jobs[i].comando);
-                } else {
-                    printf("\n[%d]+ Done %s\n", lista_jobs[i].id, lista_jobs[i].comando);
+                if (!pmon_activo) {
+                    /* Se verifica si el proceso fallo o cumplio con exito. Anteriormente se mostraba en la terminal
+                     * [id]+ Done command indepiendiente si estaba bien escrito o no, con el nuevo condicional si el
+                     * comando no existe u ocurre otro error la shell lo notificara
+                     */
+                    if (WIFEXITED(status) && WEXITSTATUS(status) == EXIT_FAILURE) {
+                        printf("\n[%d]+ Error de ejecucion %s\n", lista_jobs[i].id, lista_jobs[i].comando);
+                    } else {
+                        printf("\n[%d]+ Done %s\n", lista_jobs[i].id, lista_jobs[i].comando);
+                    }
+
+                    /*se restaura el prompt, en un principio interrumpia a la hora de escribir comandos y desordenaba la
+                    *terminal, haciendola ver poco profesional, ahora deberia funcionar de manera que cuando llegue la
+                    * notificacion se muestre automaticamente el prompt para poder escribir de manera limpia
+                    */
+
+                    mostrar_prompt();
+                    fflush(stdout); // Obliga a la terminal a pintar el prompt de inmediato
+
+                    break;
                 }
-
-                /*se restaura el prompt, en un principio interrumpia a la hora de escribir comandos y desordenaba la
-                 *terminal, haciendola ver poco profesional, ahora deberia funcionar de manera que cuando llegue la
-                 * notificacion se muestre automaticamente el prompt para poder escribir de manera limpia
-                 */
-
-                mostrar_prompt();
-                fflush(stdout); // Obliga a la terminal a pintar el prompt de inmediato
-
-                break;
             }
         }
     }
