@@ -96,15 +96,84 @@ TareaSO_1/
 ---
 
 ## Ejemplos de uso
+
+### Parsing, espacios, comillas y variables de entorno:
 ```text
-# salir de la shell:
-exit
+#espacios multiples y pestañas:
+miShell:$       ls      -la
 
-# ejecución de comandos en 2° plano:
-sleep 30 &
-sleep 20 &
-sleep 25 &
-jobs
+#comillas dobles y simples con espacios internos:
+miShell:$ echo "hola              si          soy yo estebam"
+miShell:$ echo 'argss  con   espacios espaciosos'
 
+#comillas y cadenas vacias:
+miShell:$ echo ""
+```
+### Comandos internos con casos de borde:
+```text
+#variables de entorno
+miShell:$ export VAR=oaMundo
+miShell:$ echo $VAR
+miShell:$ echo $SOY_UNA_VARIABLE_QUE_NO_EXISTE
+
+#rutas con espacios utilizando comillas 
+miShell:$ mkdir "carpeta con espacios"
+miShell:$ cd "carpeta con espacios"
+miShell:$ getcwd / pwd ****************************************************
+miShell:$ cd ..
+miShell:$ rmdir "carpeta con espacios"
+
+#navegacion por defecto a HOME 
+miShell:$ cd
+
+#directorio inexistente
+miShell:$ cd /directorio_que_no_existejeje
+
+#codigo de salida
+miShell:$ exit
 ```
 
+### Redirecciones I/O
+```text
+#sobreescritura/apendice
+miShell:$ echo "Primera Linea" > test_redireccion.txt
+miShell:$ echo "Segunda Linea" >> test_redireccion.txt
+miShell:$ cat < test_redireccion.txt
+
+#redireccioncon rutas inexistentes de entrada 
+miShell:$ cat < archivo_que_no_existe.txt
+```
+
+### Pipes multiples
+
+```text
+#Encadenamiento de 2 comandos
+miShell:$ ls -la | grep src
+
+#encadenamiento largo (mas de 2 comandos)
+miShell:$ cat /etc/passwd | grep -v nologin | cut -d: -f1 | sort
+
+#combinacion entre pipes y redireccion de I/O
+miShell:$ cat < /etc/passwd | grep root > resultado_root.txt
+miShell:$ cat resultado_root.txt
+```
+
+### Segundo Plano, señales y pmon
+```text
+
+#Multiples trabajos en bg
+miShell:$ sleep 12 &
+miShell:$ sleep 15 &
+miShell:$ sleep 20 &
+miShell:$ jobs
+
+#Interrupcion por teclado en un comando fg
+miShell:$ sleep 10
+(Presionar Ctrl+C antes de acabar el sleep)
+
+#uso de pmon
+miShell:$ sleep 30
+miShell:$ sleep 25
+miShell:$ sleep 15
+miShell:$ sleep 10
+miShell:$ pmon

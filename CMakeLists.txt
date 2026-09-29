@@ -14,5 +14,6 @@ add_executable(mishell
         src/pipes.c
         src/redireccion.c
         src/senales.c
+        src/pmon.c
 )
 target_link_libraries(mishell readline) # link libreria para las flechitas
