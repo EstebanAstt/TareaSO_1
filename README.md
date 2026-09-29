@@ -64,7 +64,6 @@ TareaSO_1/
 ├── src/               # Archivos de código fuente (.c)
 │   ├── main.c
 │   ├── shell.c
-│   ├── job.c
 │   ├── pipes.c
 │   ├── redireccion.c
 │   └── senales.c
@@ -82,8 +81,8 @@ TareaSO_1/
 
 | Componente | Requerimiento              | Descripción | Encargado                         |
 | :--- |:---------------------------| :--- |:----------------------------------|
-| **Ciclo Básico** | R1                         | Prompt con ruta actual (`getcwd`), lectura con `fgets` y cierre con `Ctrl+D` (EOF). | Esteban Astete                    |
-| **Comandos Internos** | R2                         | `cd [dir]`, `exit [n]`, `jobs` y `pmon`. | Vicente Carrasco / Esteban Astete |
+| **Ciclo Básico** | R1                         | Prompt con ruta actual (`getcwd`), lectura con `readline` y cierre con `Ctrl+D` (EOF). | Esteban Astete                    |
+| **Comandos Internos** | R2                         | `cd [dir]`, `exit `, `jobs` y `pmon`. | Vicente Carrasco / Esteban Astete |
 | **Redirección I/O** | R3                         | Soporte para `<`, `>`, `>>` usando `open()`, `dup2()` y `close()`. | Josefa Arriagada  |                
 | **Tuberías (Pipes)** | R4                         | Encadenamiento de N comandos mediante `\|` gestionando descriptores. | Josefa Arriagada  |                
 | **Segundo Plano** | R5                         | Detección de `&`, ejecución no bloqueante y recolección asíncrona mediante `SIGCHLD`. | Esteban Astete  |                    
@@ -120,7 +119,6 @@ miShell:$ echo $SOY_UNA_VARIABLE_QUE_NO_EXISTE
 #rutas con espacios utilizando comillas 
 miShell:$ mkdir "carpeta con espacios"
 miShell:$ cd "carpeta con espacios"
-miShell:$ getcwd / pwd ****************************************************
 miShell:$ cd ..
 miShell:$ rmdir "carpeta con espacios"
 
@@ -173,8 +171,8 @@ miShell:$ sleep 10
 (Presionar Ctrl+C antes de acabar el sleep)
 
 #uso de pmon
-miShell:$ sleep 30
-miShell:$ sleep 25
-miShell:$ sleep 15
-miShell:$ sleep 10
+miShell:$ sleep 30 &
+miShell:$ sleep 25 &
+miShell:$ sleep 15 &
+miShell:$ sleep 10 &
 miShell:$ pmon
