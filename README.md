@@ -72,7 +72,8 @@ TareaSO_1/
 |   └── parser.c
 ├── Makefile           # Script de compilación para la terminal
 ├── CMakeLists.txt     # Configuración para CLion
-├── .gitignore         
+├── .gitignore  
+├── Informe_TareaSO_1.pdf       
 └── README.md
 ```
 
